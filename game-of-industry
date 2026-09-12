@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Industrialist</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { font-family: sans-serif; background: #0f0f1e; color: #eee; overflow: hidden; height: 100vh; }
+        #m { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; z-index: 200; background: linear-gradient(135deg, #0f0f1e, #16213e); overflow-y: auto; padding: 30px 20px; }
+        #m h1 { font-size: 42px; color: #f9a825; }
+        #m p { color: #888; font-size: 14px; }
+        .mb { padding: 16px 40px; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; color: #fff; min-width: 260px; text-align: center; }
+        .mb:active { transform: scale(.95); }
+        .mb1 { background: linear-gradient(135deg, #0f3460, #4dd0e1); }
+        .mb2 { background: linear-gradient(135deg, #e94560, #c62828); }
+        .mb3 { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
+        .mb small { display: block; font-size: 10px; opacity: .7; font-weight: normal; }
+        #nickBox { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        #nickBox > div { display: flex; gap: 6px; align-items: center; }
+        #nickInput { padding: 10px 16px; font-size: 16px; background: #0f3460; color: #fff; border: 2px solid #4dd0e1; border-radius: 8px; text-align: center; width: 220px; }
+        #nickInput:focus { outline: none; border-color: #f9a825; }
+        #nickInput:disabled { opacity: .7; color: #888; }
+        #nickLabel { color: #888; font-size: 12px; }
+        #nickEditBtn { padding: 10px 14px; background: #0f3460; color: #4dd0e1; border: 2px solid #4dd0e1; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        #lbBox { width: 90%; max-width: 480px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; padding: 14px; margin-top: 4px; }
+        #lbBox h2 { color: #f9a825; font-size: 17px; margin-bottom: 8px; text-align: center; }
+        .lbTabs { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
+        .lbTab { padding: 5px 14px; font-size: 12px; border: 1px solid #0f3460; background: #0f3460; color: #888; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .lbTab.active { background: #4dd0e1; color: #0f0f1e; }
+        .lbRow { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 3px; border-radius: 5px; font-size: 13px; }
+        .lbRow:nth-child(odd) { background: #0f3460; }
+        .lbRow.me { background: rgba(249, 168, 37, .15); border: 1px solid #f9a825; }
+        .lbRow .lbR { color: #888; width: 28px; text-align: center; }
+        .lbRow .lbN { flex: 1; color: #4dd0e1; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lbRow .lbS { color: #f9a825; font-weight: bold; }
+        .lbR.r1 { color: #f9a825; font-weight: bold; }
+        .lbR.r2 { color: #c0c0c0; font-weight: bold; }
+        .lbR.r3 { color: #cd7f32; font-weight: bold; }
+        #md { position: fixed; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; z-index: 200; background: linear-gradient(135deg, #0f0f1e, #16213e); }
+        #md.s { display: flex; }
+        #md h1 { font-size: 32px; color: #f9a825; }
+        #md p { color: #888; font-size: 14px; }
+        #t { position: fixed; top: 0; left: 0; right: 0; height: 50px; background: #16213e; display: flex; align-items: center; padding: 0 12px; gap: 10px; z-index: 100; border-bottom: 2px solid #0f3460; flex-wrap: wrap; }
+        .s { font-size: 13px; font-weight: bold; white-space: nowrap; }
+        .s .v { color: #4dd0e1; } .s .g { color: #f9a825; } .s .p { color: #ab47bc; } .s .r { color: #f9a825; } .s .m { color: #ce93d8; }
+        #eb { width: 80px; height: 6px; background: #333; border-radius: 3px; overflow: hidden; display: inline-block; margin-left: 4px; }
+        #ef { height: 100%; background: #66bb6a; transition: width .1s; display: block; }
+        .sp { flex: 1; }
+        .b { padding: 6px 10px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; color: #fff; }
+        .b:active { transform: scale(.95); }
+        .bs { background: linear-gradient(135deg, #e94560, #c62828); }
+        .bi { background: #0f3460; border: 2px solid #4dd0e1; }
+        .bm { background: #ab47bc; border: 2px solid #4dd0e1; }
+        .bc { background: linear-gradient(135deg, #2e7d32, #43a047); border: 2px solid #66bb6a; position: relative; }
+        .bc:disabled { background: #1a1a2e; color: #555; border-color: #333; cursor: not-allowed; }
+        .cd { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.6); border-radius: 4px; font-size: 11px; }
+        .bp { background: linear-gradient(135deg, #f9a825, #ff6f00); border: 2px solid #f9a825; }
+        .bchat { background: #0f3460; border: 2px solid #66bb6a; position: relative; }
+        .bchat .cbadge { position: absolute; top: -5px; right: -5px; background: #e94560; color: #fff; font-size: 9px; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        #gm { margin-top: 50px; height: calc(100vh - 50px); display: flex; }
+        #ga { flex: 1; padding: 12px; display: flex; flex-direction: column; align-items: center; overflow: auto; }
+        #gh { font-size: 12px; color: #888; margin-bottom: 10px; text-align: center; }
+        #selectedItem { font-size: 14px; color: #4dd0e1; margin-bottom: 10px; text-align: center; min-height: 20px; }
+        #gd { display: grid; grid-template-columns: repeat(8, 72px); grid-template-rows: repeat(6, 72px); gap: 3px; }
+        .c { width: 72px; height: 72px; border: 2px dashed #2a2a4a; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; cursor: pointer; }
+        .c:hover { border-color: #e94560; }
+        .c.o { border: 2px solid #0f3460; background: rgba(15, 52, 96, .6); }
+        .c.p { border-color: #4dd0e1; }
+        .ic { font-size: 24px; }
+        .lb { font-size: 7px; color: #888; margin-top: 1px; max-width: 64px; overflow: hidden; text-align: center; }
+        .en { font-size: 9px; position: absolute; top: 2px; right: 2px; font-weight: bold; }
+        .en.p { color: #66bb6a; } .en.n { color: #ef5350; } .en.r { color: #ab47bc; } .en.m { color: #ce93d8; }
+        .pg { position: absolute; bottom: 3px; left: 3px; right: 3px; height: 4px; background: #1a1a33; border-radius: 2px; overflow: hidden; }
+        .pf { height: 100%; background: #4dd0e1; }
+        .pmp { position: absolute; bottom: 3px; left: 3px; right: 3px; height: 4px; background: #1a1a33; border-radius: 2px; overflow: hidden; }
+        .pmf { height: 100%; background: #ce93d8; }
+        #sb { width: 330px; background: #16213e; border-left: 2px solid #0f3460; overflow-y: auto; padding: 12px; }
+        .ss h2 { color: #f9a825; font-size: 16px; margin-bottom: 8px; }
+        .ss h3 { color: #4dd0e1; font-size: 12px; margin-bottom: 5px; }
+        .si { background: #0f3460; border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: pointer; }
+        .si:hover { background: #1a4a7a; }
+        .si.l { opacity: .4; cursor: not-allowed; }
+        .si h4 { font-size: 12px; margin-bottom: 3px; color: #4dd0e1; }
+        .si p { font-size: 10px; color: #888; margin-bottom: 3px; }
+        .si .pr { color: #f9a825; font-weight: bold; }
+        .qc { background: #0f3460; border-radius: 6px; padding: 8px; margin-bottom: 6px; border-left: 3px solid #ab47bc; }
+        .qc h4 { font-size: 12px; color: #ab47bc; margin-bottom: 3px; }
+        .qc p { font-size: 10px; color: #888; }
+        .ac { background: #0f3460; border-radius: 6px; padding: 6px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+        .ac .ai { font-size: 18px; }
+        .ac .at { font-size: 11px; color: #4dd0e1; }
+        .ac .ad { font-size: 9px; color: #888; }
+        .ac .ap { font-size: 9px; color: #f9a825; margin-top: 2px; }
+        .ac.locked { opacity: .3; }
+        .ri2 { background: #0f3460; border-radius: 4px; padding: 4px 8px; margin-bottom: 4px; font-size: 11px; display: flex; justify-content: space-between; }
+        .ri2 .rn { color: #4dd0e1; }
+        .ri2 .rv { color: #f9a825; font-weight: bold; }
+        .ri2.pp { border-left: 2px solid #ce93d8; }
+        .ri2.pp .rn { color: #ce93d8; }
+        #io, #sd { display: none; position: fixed; top: 50px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.85); z-index: 50; justify-content: center; align-items: center; }
+        #io.s, #sd.s { display: flex; }
+        #ip, #sdc { background: #16213e; border: 2px solid #0f3460; border-radius: 10px; padding: 16px; max-width: 500px; width: 90%; }
+        #ip h2, #sdc h2 { color: #4dd0e1; margin-bottom: 8px; }
+        #ig { display: flex; flex-wrap: wrap; gap: 6px; }
+        .sl { width: 64px; height: 64px; border: 2px solid #0f3460; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+        .sl:hover { border-color: #4dd0e1; }
+        .sl.sel { border-color: #f9a825; background: rgba(249, 168, 37, .1); }
+        #ui, #pd, #pm { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #16213e; border: 2px solid #f9a825; border-radius: 10px; padding: 16px; min-width: 300px; z-index: 70; }
+        #pm { border-color: #ce93d8; min-width: 340px; }
+        #ui.s, #pd.s, #pm.s { display: block; }
+        #ut, #pmt { font-size: 16px; color: #f9a825; margin-bottom: 10px; text-align: center; }
+        #pmt { color: #ce93d8; }
+        #us, #pds, #pms { margin-bottom: 12px; font-size: 12px; color: #4dd0e1; text-align: center; line-height: 1.6; }
+        .ub2 { width: 100%; padding: 10px; margin-bottom: 6px; background: #0f3460; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .ub2:hover { background: #e94560; }
+        .ub2:disabled { opacity: .4; cursor: not-allowed; }
+        #uc, #pdc, #pmc { position: absolute; right: 8px; top: 6px; background: transparent; border: none; color: #888; font-size: 18px; cursor: pointer; }
+        #pgo { width: 100%; padding: 10px; background: #f9a825; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #sdl { max-height: 300px; overflow-y: auto; }
+        #sda { width: 100%; padding: 10px; margin-top: 8px; background: #e94560; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #sda:disabled { background: #333; color: #555; cursor: not-allowed; }
+        .srow { background: #0f3460; border-radius: 6px; padding: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .srow .sinfo { font-size: 12px; }
+        .srow .sbtn { padding: 5px 10px; background: #e94560; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .srow.pp { border-left: 3px solid #ce93d8; }
+        .sellTabs { display: flex; gap: 4px; margin-bottom: 8px; }
+        .sellTab { padding: 5px 14px; font-size: 12px; border: 1px solid #0f3460; background: #0f3460; color: #888; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .sellTab.active { background: #e94560; color: #fff; }
+        .pmpg { height: 8px; background: #1a1a33; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+        .pmpf { height: 100%; background: #ce93d8; transition: width .1s; }
+        #chatPanel { display: none; position: fixed; top: 50px; right: 0; width: 340px; height: calc(100vh - 50px); background: #16213e; border-left: 2px solid #66bb6a; z-index: 90; flex-direction: column; }
+        #chatPanel.s { display: flex; }
+        #chatHeader { padding: 10px; background: #0f3460; border-bottom: 2px solid #66bb6a; display: flex; justify-content: space-between; align-items: center; }
+        #chatHeader h3 { color: #66bb6a; font-size: 14px; }
+        #chatClose { background: transparent; border: none; color: #888; font-size: 18px; cursor: pointer; }
+        #chatMsgs { flex: 1; overflow-y: auto; padding: 8px; }
+        #chatInputBar { padding: 8px; display: flex; gap: 6px; border-top: 1px solid #0f3460; }
+        #chatTextInput { flex: 1; padding: 8px; background: #0f3460; color: #fff; border: 1px solid #4dd0e1; border-radius: 5px; font-size: 13px; }
+        #chatTextInput:focus { outline: none; border-color: #f9a825; }
+        #chatSendBtn { padding: 8px 14px; background: #66bb6a; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .chatMsg { padding: 6px 10px; margin-bottom: 4px; border-radius: 6px; font-size: 12px; word-wrap: break-word; max-width: 90%; }
+        .chatMsg.me { background: rgba(77, 208, 225, .12); border-left: 2px solid #4dd0e1; margin-left: auto; }
+        .chatMsg.other { background: #0f3460; border-left: 2px solid #66bb6a; }
+        .chatMsg .chatNick { font-weight: bold; color: #4dd0e1; font-size: 11px; }
+        .chatMsg.me .chatNick { color: #f9a825; }
+        .chatMsg .chatTime { color: #666; font-size: 10px; float: right; }
+        .chatLoading { text-align: center; color: #888; padding: 20px; font-size: 12px; }
+        #nt { position: fixed; top: 58px; right: 16px; z-index: 80; display: flex; flex-direction: column; gap: 5px; pointer-events: none; }
+        .nf { background: #16213e; border-left: 3px solid #4dd0e1; padding: 6px 12px; border-radius: 3px; font-size: 12px; animation: si .3s; }
+        .nf.w { border-color: #f9a825; } .nf.e { border-color: #ef5350; } .nf.a { border-color: #ab47bc; } .nf.s { border-color: #66bb6a; }
+        @keyframes si { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="m">
+    <h1>🏭 Industrialist</h1>
+    <p>Промышленная империя начинается здесь</p>
+    <div id="nickBox">
+        <span id="nickLabel">Ваш ник для лидерборда:</span>
+        <div>
+            <input id="nickInput" type="text" maxlength="20" placeholder="Введите ник">
+            <button id="nickEditBtn" style="display:none" title="Сменить ник">✏️</button>
+        </div>
+    </div>
+    <button class="mb" id="contBtn" style="display:none;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff">▶️ Продолжить<small>Вернуться к последней игре</small></button>
+    <button class="mb mb1" id="mbtn1">Классика<small>Магазин, улучшения, исследования</small></button>
+    <button class="mb mb2" id="mbtn2">Хардкор<small>Цены ×2.5, старт 100💰, всё дорого</small></button>
+    <button class="mb mb3" id="mbtn3">Вызов<small>3 уровня сложности заданий и достижения</small></button>
+    <button class="mb" id="resetBtn" style="display:none;background:linear-gradient(135deg,#e94560,#c62828);color:#fff">🗑️ Сбросить прогресс</button>
+    <div id="lbBox">
+        <h2>🏆 Лидерборд</h2>
+        <div class="lbTabs">
+            <button class="lbTab active" data-lb="classic">Классика</button>
+            <button class="lbTab" data-lb="hardcore">Хардкор</button>
+            <button class="lbTab" data-lb="challenge">Вызов</button>
+        </div>
+        <div id="lbList"></div>
+    </div>
+</div>
+
+<div id="md">
+    <h1>Выберите сложность</h1>
+    <p>Чем сложнее задания — тем больше награда</p>
+    <button class="mb mb1" id="mdb1">🟢 Лёгкая<small>Простые цели, награда x1</small></button>
+    <button class="mb mb3" id="mdb2">🟡 Средняя<small>Средние цели, награда x2</small></button>
+    <button class="mb mb2" id="mdb3">🔴 Сложная<small>Тяжёлые цели, награда x3.5</small></button>
+    <button class="mb" id="mdbBack" style="background:#333;min-width:200px">← Назад</button>
+</div>
+
+<div id="gw" style="display:none">
+    <div id="t">
+        <div class="s">💰 <span class="g" id="mn">500</span></div>
+        <div class="s">📦 <span class="v" id="st">0</span>/<span class="v" id="sm">250</span></div>
+        <div class="s">🔧 <span class="m" id="pst">0</span>/<span class="m" id="psm">250</span></div>
+        <div class="s">⚡ <span id="et">0/0</span><span id="eb"><span id="ef" style="width:100%"></span></span></div>
+        <div class="s" id="pTag" style="display:none">🔁 <span class="r" id="pCount">0</span>x<span class="r" id="pMult">1.0</span></div>
+        <div class="s" id="modeTag" style="display:none">🎯 <span class="p" id="qcount">0</span>/<span class="p" id="qtotal">0</span></div>
+        <div class="s" id="gqTag" style="display:none">✅ <span class="g" id="gqCount">0</span></div>
+        <div class="sp"></div>
+        <button class="b bc" id="coilBtn">⚡ Катушка</button>
+        <button class="b bp" id="pbtn" style="display:none">🔁</button>
+        <button class="b bchat" id="chatBtn">💬<span class="cbadge" id="chatBadge" style="display:none">0</span></button>
+        <button class="b bm" id="abtn" style="display:none">🏆</button>
+        <button class="b bs" id="sb2">💵 Продать</button>
+        <button class="b bi" id="ib">🎒</button>
+        <button class="b bm" id="toMenuBtn">📋 В меню</button>
+    </div>
+    <div id="gm">
+        <div id="ga">
+            <div id="gh">ЛКМ — улучшить · ПКМ — убрать · Клик — поставить · Пробел — катушка · ⚡ Одинаковые здания усиливают друг друга</div>
+            <div id="selectedItem"></div>
+            <div id="gd"></div>
+        </div>
+        <div id="sb">
+            <div class="ss">
+                <h2>🏭 Магазин</h2>
+                <h3>Фабрики</h3><div id="sf"></div>
+                <h3>Электростанции</h3><div id="sp2"></div>
+                <h3>🔧 Обработка руд</h3><div id="spm"></div>
+                <h3>🔬 Исследования</h3><div id="sr"></div>
+                <h3>📦 Ресурсы</h3><div id="rlist"></div>
+                <h3>Улучшения базы</h3><div id="su"></div>
+                <div id="qbox" style="display:none">
+                    <h3 style="color:#ab47bc">🎯 Задания <span id="qDiffName" style="font-size:10px;color:#f9a825"></span></h3>
+                    <div id="qlist"></div>
+                </div>
+                <div id="achbox" style="display:none">
+                    <h3 style="color:#ab47bc">🏆 Достижения</h3>
+                    <div id="achlist"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="io">
+    <div id="ip">
+        <h2>🎒 Инвентарь</h2>
+        <div id="ig"></div>
+        <div style="font-size:11px;color:#888;margin-top:10px">Клик по предмету — выбрать и закрыть</div>
+    </div>
+</div>
+
+<div id="ui">
+    <button id="uc">×</button>
+    <h3 id="ut"></h3>
+    <div id="us"></div>
+    <hr style="border:0;border-top:1px solid #2a2a4a;margin:10px 0">
+    <button class="ub2" id="bs1"></button>
+    <button class="ub2" id="be1" style="display:none"></button>
+    <p style="font-size:10px;color:#888">Цена растёт с уровнем</p>
+</div>
+
+<div id="pm">
+    <button id="pmc">×</button>
+    <h3 id="pmt"></h3>
+    <div id="pms"></div>
+    <div class="pmpg"><div class="pmpf" id="pmProg" style="width:0%"></div></div>
+    <button class="ub2" id="pmAdd10" style="background:#0f3460">📥 Положить 10 руды</button>
+    <button class="ub2" id="pmAddAll" style="background:#2e7d32">📥 Положить всю руду</button>
+    <button class="ub2" id="pmSell" style="background:#e94560">💰 Продать обработанную</button>
+    <button class="ub2" id="pmUpgrade" style="background:#ce93d8">⚙️ +25% скорость обработки</button>
+</div>
+
+<div id="pd">
+    <button id="pdc">×</button>
+    <h3 style="font-size:16px;color:#f9a825;margin-bottom:10px;text-align:center">🔁 Перерождение</h3>
+    <div id="pds"></div>
+    <button id="pgo">Переродиться</button>
+</div>
+
+<div id="sd">
+    <div id="sdc">
+        <h2>💵 Продажа ресурсов</h2>
+        <div id="sdl"></div>
+        <button id="sda">Продать всё</button>
+    </div>
+</div>
+
+<div id="chatPanel">
+    <div id="chatHeader">
+        <h3>💬 Глобальный чат</h3>
+        <button id="chatClose">✕</button>
+    </div>
+    <div id="chatMsgs"><div class="chatLoading">Загрузка...</div></div>
+    <div id="chatInputBar">
+        <input id="chatTextInput" type="text" maxlength="200" placeholder="Сообщение...">
+        <button id="chatSendBtn">➤</button>
+    </div>
+</div>
+
+<div id="nt"></div>
+
+<script>
+var GW = 8, GH = 6, PC = 5, sellTab = 'raw';
+
+// Цены обработки = цена фабрики × 10
+var B = [
+    {id:0, n:"Железо", i:"🧱", c:150, uc:75, r:1, eu:2, t:"p", u:0},
+    {id:1, n:"Медь", i:"🟠", c:700, uc:350, r:3, eu:3, t:"p", u:0},
+    {id:2, n:"Золото", i:"🪙", c:2500, uc:1250, r:8, eu:5, t:"p", u:2500},
+    {id:3, n:"Алмаз", i:"💎", c:12000, uc:6000, r:25, eu:10, t:"p", u:5000},
+    {id:4, n:"Титан", i:"🔩", c:60000, uc:30000, r:80, eu:20, t:"p", u:25000},
+    {id:5, n:"Уголь", i:"⛏️", c:300, uc:150, r:0, eu:0, eg:15, t:"w", u:0},
+    {id:6, n:"Солнечная", i:"☀️", c:1500, uc:750, r:0, eu:0, eg:10, t:"w", u:500},
+    {id:7, n:"Ветряк", i:"🌬️", c:800, uc:400, r:0, eu:0, eg:8, t:"w", u:0},
+    {id:8, n:"Геотерм", i:"🌋", c:8000, uc:4000, r:0, eu:0, eg:40, t:"w", u:2000},
+    {id:9, n:"Атомная", i:"☢️", c:20000, uc:10000, r:0, eu:0, eg:60, t:"w", u:8000},
+    {id:10, n:"Гидро", i:"💧", c:50000, uc:25000, r:0, eu:0, eg:120, t:"w", u:10000},
+    {id:11, n:"Термояд", i:"🔥", c:150000, uc:75000, r:0, eu:0, eg:250, t:"w", u:60000},
+    {id:12, n:"Лаборатория", i:"🔬", c:5000, uc:2500, r:0, eu:1, t:"r", u:500, bonus:0.05},
+    {id:13, n:"Институт", i:"🔭", c:30000, uc:15000, r:0, eu:3, t:"r", u:5000, bonus:0.10},
+    {id:14, n:"НИИ", i:"🧪", c:150000, uc:75000, r:0, eu:10, t:"r", u:30000, bonus:0.25},
+    {id:20, n:"Обработка железа", i:"🔧", c:1500, uc:750, r:0, eu:2, t:"m", inId:0, u:0, speed:1},
+    {id:21, n:"Обработка меди", i:"⚙️", c:7000, uc:3500, r:0, eu:3, t:"m", inId:1, u:0, speed:1.5},
+    {id:22, n:"Обработка золота", i:"🏛️", c:25000, uc:12500, r:0, eu:5, t:"m", inId:2, u:25000, speed:1.25},
+    {id:23, n:"Обработка алмазов", i:"💍", c:120000, uc:60000, r:0, eu:10, t:"m", inId:3, u:50000, speed:2},
+    {id:24, n:"Обработка титана", i:"🛠️", c:600000, uc:300000, r:0, eu:20, t:"m", inId:4, u:600000, speed:2.5}
+];
+
+var U = [
+    {id:"sp", n:"📦 Склад", d:"+15 к каждому ресурсу", c:300, m:1.5, l:0, mx:99999},
+    {id:"as", n:"🤖 Автопродажа", d:"Включить авто-продажу", c:5000, m:1, l:0, mx:1},
+    {id:"asd", n:"⚡ КД авто", d:"-50% кулдауна", c:1000, m:1.5, l:0, mx:99999},
+    {id:"asp", n:"📈 % авто", d:"+15% к % продажи", c:1500, m:1.5, l:0, mx:99999},
+    {id:"eb", n:"💸 Бонус дохода", d:"+1% ко всему заработку", c:200, m:1.25, l:0, mx:25},
+    {id:"pw", n:"🔋 Усиление ЭС", d:"+1% к генерации всех ЭС", c:175, m:1.25, l:0, mx:25}
+];
+
+var MD = {
+    classic: { money: 400, cm: 1.6, um: 1.45, ub: 100, ef: 0.2, pm: 1, uf: 1.2 },
+    hardcore: { money: 100, cm: 2.5, um: 1.8, ub: 200, ef: 0.1, pm: 0.7, uf: 3 },
+    challenge: { money: 400, cm: 1.6, um: 1.4, ub: 100, ef: 0.2, pm: 1, uf: 1.15, quests: true }
+};
+
+var AD = [
+    {id:0, n:"Первый шаг", d:"Построй 1 здание", i:"👣", target:1},
+    {id:1, n:"Электрик", d:"3 станции", i:"⚡", target:3},
+    {id:2, n:"Конвейер", d:"Произведи 100", i:"📦", target:100},
+    {id:3, n:"Богач", d:"Заработай 5000", i:"💰", target:5000},
+    {id:4, n:"Магнат", d:"Заработай 50000", i:"💎", target:50000},
+    {id:5, n:"Империя", d:"Заполни сетку", i:"🏭", target:48},
+    {id:6, n:"Прокачка", d:"Улучши 10 раз", i:"⬆️", target:10},
+    {id:7, n:"Атомная эра", d:"Построй АЭС", i:"☢️", target:1},
+    {id:8, n:"Титан", d:"Построй титан", i:"🔩", target:1},
+    {id:9, n:"Ручной труд", d:"Катушка x10", i:"⚡", target:10},
+    {id:10, n:"Учёный", d:"Построй лабораторию", i:"🔬", target:1},
+    {id:11, n:"Гидроэнергетик", d:"Построй ГЭС", i:"💧", target:1},
+    {id:12, n:"Перерождение", d:"Переродись 1 раз", i:"🔁", target:1},
+    {id:13, n:"Феникс", d:"Переродись 5 раз", i:"🔥", target:5},
+    {id:14, n:"Миллионер", d:"Заработай 1000000", i:"💵", target:1000000},
+    {id:15, n:"Энергетик", d:"Генерация 500", i:"⚡", target:500},
+    {id:16, n:"Золотая лихорадка", d:"5 золотых шахт", i:"🪙", target:5},
+    {id:17, n:"Модернизация", d:"Улучши 25 раз", i:"⬆️", target:25},
+    {id:18, n:"Термоядерный", d:"Построй термояд", i:"🔥", target:1},
+    {id:19, n:"Автоматизатор", d:"Включи автопродажу", i:"🤖", target:1},
+    {id:20, n:"Исследователь", d:"Построй НИИ", i:"🧪", target:1},
+    {id:21, n:"Мастер катушки", d:"Катушка x25", i:"⚡", target:25},
+    {id:22, n:"Солнечная ферма", d:"5 солнечных", i:"☀️", target:5},
+    {id:23, n:"Угольный магнат", d:"3 угольные", i:"⛏️", target:3},
+    {id:24, n:"Ветряная ферма", d:"5 ветряков", i:"🌬️", target:5},
+    {id:25, n:"Вечный", d:"Переродись 10 раз", i:"♻️", target:10},
+    {id:26, n:"Полная автоматизация", d:"Сетка полна + генерация 200", i:"🏗️", target:48},
+    {id:27, n:"Промышленник", d:"Произведи 1000", i:"🏭", target:1000}
+];
+
+var QPD = [
+    [{t:"produce", d:"Произведи {n}", rng:[30,100], r:200}, {t:"earn", d:"Заработай {n}", rng:[300,1500], r:300}, {t:"build", d:"Построй {n} зданий", rng:[2,5], r:250}, {t:"power", d:"Построй {n} станций", rng:[2,4], r:400}, {t:"upgrade", d:"Улучши {n} раз", rng:[2,7], r:250}, {t:"energy", d:"Генерация {n}", rng:[20,120], r:350}, {t:"sell", d:"Продай {n}", rng:[50,300], r:300}, {t:"coil", d:"Катушка {n} раз", rng:[2,5], r:200}, {t:"research", d:"Построй {n} исследований", rng:[1,2], r:500}],
+    [{t:"produce", d:"Произведи {n}", rng:[50,200], r:400}, {t:"earn", d:"Заработай {n}", rng:[500,3000], r:600}, {t:"build", d:"Построй {n} зданий", rng:[3,8], r:500}, {t:"power", d:"Построй {n} станций", rng:[2,5], r:700}, {t:"upgrade", d:"Улучши {n} раз", rng:[3,10], r:400}, {t:"energy", d:"Генерация {n}", rng:[30,200], r:600}, {t:"sell", d:"Продай {n}", rng:[100,500], r:500}, {t:"coil", d:"Катушка {n} раз", rng:[3,8], r:300}, {t:"research", d:"Построй {n} исследований", rng:[1,3], r:700}],
+    [{t:"produce", d:"Произведи {n}", rng:[100,400], r:700}, {t:"earn", d:"Заработай {n}", rng:[1000,6000], r:1000}, {t:"build", d:"Построй {n} зданий", rng:[5,12], r:800}, {t:"power", d:"Построй {n} станций", rng:[3,7], r:1000}, {t:"upgrade", d:"Улучши {n} раз", rng:[5,15], r:600}, {t:"energy", d:"Генерация {n}", rng:[60,400], r:900}, {t:"sell", d:"Продай {n}", rng:[200,800], r:700}, {t:"coil", d:"Катушка {n} раз", rng:[5,12], r:500}, {t:"research", d:"Построй {n} исследований", rng:[2,4], r:1200}]
+];
+var QDN = ["🟢 Лёгкая", "🟡 Средняя", "🔴 Сложная"];
+
+var M, G, gd, inv, si = -1, ut = null, lt = 0, ast = 0, qs = [], ac = [], uc = 0, st = 0, me = 0, cc = 0, cu2 = 0, qt2 = 0, P = 0, PM = 1, mode = "classic", loopStarted = false, qDiff = 0;
+var modeP = {classic:0, hardcore:0, challenge:0}, modePM = {classic:1, hardcore:1, challenge:1}, saves = {};
+var globalAch = {classic:{}, hardcore:{}, challenge:{}}, globalQCount = {0:0, 1:0, 2:0};
+var LB_TOPICS = {classic:'ind-lb-cl-v3', hardcore:'ind-lb-hc-v3', challenge:'ind-lb-ch-v3'};
+var lbViewMode = 'classic', myNick = '', lbLastPost = 0, lbTimer = 0, lastMode = null, lastDiff = 0;
+var CHAT_TOPIC = 'ind-chat-v3';
+var chatMsgs = [], chatSeen = {}, chatUnread = 0, chatTimer = 0, chatOpen = false, pmTarget = null;
+
+function $(id) { return document.getElementById(id); }
+function nb(id) { return B.find(function(b) { return b.id === id; }); }
+function ul(id) { var u = U.find(function(x) { return x.id === id }); return u ? u.l : 0; }
+function skey() { return mode === "challenge" ? "challenge_" + qDiff : mode; }
+function pc() { return Math.floor(5000 * Math.pow(2.5, modeP[mode])); }
+
+function spr(b) {
+    if ((mode === "classic" || mode === "challenge") && b.id !== 4) return b.r * 2 / 1.5;
+    if (mode === "hardcore" && b.id === 4) return 40 / 1.5;
+    return b.r / 1.5;
+}
+function spr2(b) { return spr(b) * 2; }
+
+function nf(t, c) {
+    if (c === "w") {
+        var sellMsgs = document.querySelectorAll('.nf.w');
+        if (sellMsgs.length >= 3) {
+            sellMsgs[0].remove();
+        }
+    }
+    var d = document.createElement("div");
+    d.className = "nf " + (c || "");
+    d.textContent = t;
+    $("nt").appendChild(d);
+    setTimeout(function() { d.remove(); }, 3000);
+}
+
+function tres() { var t = 0; for (var k in G.res) t += G.res[k]; return t; }
+function tpres() { var t = 0; if (G.proc) for (var k in G.proc) t += G.proc[k]; return t; }
+function em() { return 1 + ul("eb") * 0.01; }
+function asdCD() { return Math.max(0.01, 5 * Math.pow(0.5, ul("asd"))); }
+function aspPct() { return Math.min(100, 50 * Math.pow(1.15, ul("asp"))); }
+
+function co(id) {
+    var c = 0;
+    for (var i = 0; i < inv.length; i++) if (inv[i].t === id) c++;
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) if (gd[y][x] && gd[y][x].t === id) c++;
+    return c;
+}
+function tc(id) {
+    var c = 0;
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) if (gd[y][x] && gd[y][x].t === id) c++;
+    return c;
+}
+function gc(id) { return Math.floor(nb(id).c * Math.pow(M.cm, co(id))); }
+function ucost(b, l) { return Math.floor(b * Math.pow(M.um, l)); }
+
+function eg() {
+    var t = me;
+    var pbm = 1 + ul("pw") * 0.01;
+    var cnt = {};
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) { var b = gd[y][x]; if (b) cnt[b.t] = (cnt[b.t] || 0) + 1; }
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) {
+        var b = gd[y][x];
+        if (!b) continue;
+        var d = nb(b.t);
+        if (d.t === "w") t += (d.eg + (cnt[b.t] || 0)) * pbm * Math.pow(1.3, b.le || 0);
+    }
+    return t;
+}
+
+function eu() {
+    var t = 0;
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) {
+        var b = gd[y][x];
+        if (!b) continue;
+        var d = nb(b.t);
+        if (d.t === "p" || d.t === "r" || d.t === "m") t += d.eu;
+    }
+    return t;
+}
+
+function rm() {
+    var m = 1;
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) {
+        var b = gd[y][x];
+        if (!b) continue;
+        var d = nb(b.t);
+        if (d.t === "r") m += d.bonus * Math.pow(1.25, b.ls || 0);
+    }
+    return m;
+}
+
+function bc2() { var c = 0; for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) if (gd[y][x]) c++; return c; }
+function pw() { return co(5) + co(6) + co(7) + co(8) + co(9) + co(10) + co(11); }
+function rs2() { return co(12) + co(13) + co(14); }
+
+function qp(q) {
+    if (q.t === "produce") return G.prod;
+    if (q.t === "earn") return G.earn;
+    if (q.t === "build") return bc2();
+    if (q.t === "power") return pw();
+    if (q.t === "upgrade") return uc;
+    if (q.t === "energy") return Math.floor(eg());
+    if (q.t === "sell") return st;
+    if (q.t === "coil") return cu2;
+    if (q.t === "research") return rs2();
+    return 0;
+}
+
+function getAchProgress(id) {
+    if (id === 0) return bc2();
+    if (id === 1) return pw();
+    if (id === 2) return Math.floor(G.prod);
+    if (id === 3) return Math.floor(G.earn);
+    if (id === 4) return Math.floor(G.earn);
+    if (id === 5) return bc2();
+    if (id === 6) return uc;
+    if (id === 7) return (co(9) > 0 || co(11) > 0) ? 1 : 0;
+    if (id === 8) return co(4) > 0 ? 1 : 0;
+    if (id === 9) return cu2;
+    if (id === 10) return rs2() > 0 ? 1 : 0;
+    if (id === 11) return co(10) > 0 ? 1 : 0;
+    if (id === 12) return modeP[mode];
+    if (id === 13) return modeP[mode];
+    if (id === 14) return Math.floor(G.earn);
+    if (id === 15) return Math.floor(eg());
+    if (id === 16) return co(2);
+    if (id === 17) return uc;
+    if (id === 18) return co(11) > 0 ? 1 : 0;
+    if (id === 19) return ul("as") > 0 ? 1 : 0;
+    if (id === 20) return co(14) > 0 ? 1 : 0;
+    if (id === 21) return cu2;
+    if (id === 22) return co(6);
+    if (id === 23) return co(5);
+    if (id === 24) return co(7);
+    if (id === 25) return modeP[mode];
+    if (id === 26) return bc2();
+    if (id === 27) return Math.floor(G.prod);
+    return 0;
+}
+
+function gq() {
+    var pool = QPD[qDiff];
+    var q = pool[Math.floor(Math.random() * pool.length)];
+    var n = Math.floor(q.rng[0] + Math.random() * (q.rng[1] - q.rng[0]));
+    qs.push({ t: q.t, desc: q.d.replace("{n}", n), target: n, done: false, r: q.r });
+}
+
+function rq() {
+    if (!M.quests) return;
+    $("qlist").innerHTML = "";
+    var a = qs.filter(function(q) { return !q.done; });
+    $("qtotal").textContent = qs.length;
+    $("qcount").textContent = qs.filter(function(q) { return q.done; }).length;
+    a.forEach(function(q) {
+        var d = document.createElement("div");
+        d.className = "qc";
+        d.innerHTML = "<h4>" + q.desc + "</h4><p>" + Math.min(qp(q), q.target) + "/" + q.target + " | +" + q.r + "💰</p>";
+        $("qlist").appendChild(d);
+    });
+}
+
+function cq() {
+    if (!M.quests) return;
+    var ch = false;
+    qs.forEach(function(q) {
+        if (q.done) return;
+        if (qp(q) >= q.target) {
+            q.done = true;
+            G.money += q.r;
+            G.earn += q.r;
+            globalQCount[qDiff] = (globalQCount[qDiff] || 0) + 1;
+            nf("Задание! +" + q.r + "💰", "a");
+            ch = true;
+        }
+    });
+    while (qs.filter(function(q) { return !q.done; }).length < 2) gq();
+    if (ch) rq();
+}
+
+function ca() {
+    if (!M.quests) return;
+    ac.forEach(function(a) {
+        if (a.done) return;
+        var ok = false;
+        if (a.id === 0 && bc2() >= 1) ok = true;
+        if (a.id === 1 && pw() >= 3) ok = true;
+        if (a.id === 2 && G.prod >= 100) ok = true;
+        if (a.id === 3 && G.earn >= 5000) ok = true;
+        if (a.id === 4 && G.earn >= 50000) ok = true;
+        if (a.id === 5 && bc2() >= GW * GH) ok = true;
+        if (a.id === 6 && uc >= 10) ok = true;
+        if (a.id === 7 && (co(9) > 0 || co(11) > 0)) ok = true;
+        if (a.id === 8 && co(4) > 0) ok = true;
+        if (a.id === 9 && cu2 >= 10) ok = true;
+        if (a.id === 10 && rs2() >= 1) ok = true;
+        if (a.id === 11 && co(10) > 0) ok = true;
+        if (a.id === 12 && modeP[mode] >= 1) ok = true;
+        if (a.id === 13 && modeP[mode] >= 5) ok = true;
+        if (a.id === 14 && G.earn >= 1000000) ok = true;
+        if (a.id === 15 && Math.floor(eg()) >= 500) ok = true;
+        if (a.id === 16 && co(2) >= 5) ok = true;
+        if (a.id === 17 && uc >= 25) ok = true;
+        if (a.id === 18 && co(11) > 0) ok = true;
+        if (a.id === 19 && ul("as") > 0) ok = true;
+        if (a.id === 20 && co(14) > 0) ok = true;
+        if (a.id === 21 && cu2 >= 25) ok = true;
+        if (a.id === 22 && co(6) >= 5) ok = true;
+        if (a.id === 23 && co(5) >= 3) ok = true;
+        if (a.id === 24 && co(7) >= 5) ok = true;
+        if (a.id === 25 && modeP[mode] >= 10) ok = true;
+        if (a.id === 26 && bc2() >= GW * GH && Math.floor(eg()) >= 200) ok = true;
+        if (a.id === 27 && G.prod >= 1000) ok = true;
+
+        if (ok) {
+            a.done = true;
+            globalAch[mode][a.id] = true;
+            nf("🏆 " + a.n + " — " + a.d, "a");
+        }
+    });
+
+    ac.sort(function(a, b) {
+        if (a.done && !b.done) return 1;
+        if (!a.done && b.done) return -1;
+        return 0;
+    });
+
+    var h = "";
+    ac.forEach(function(a) {
+        var progressText = "";
+        if (!a.done) {
+            var current = getAchProgress(a.id);
+            var target = a.target;
+            var remaining = Math.max(0, target - current);
+            progressText = "<div class='ap'>Прогресс: " + current + "/" + target + " (осталось " + remaining + ")</div>";
+        }
+        h += "<div class='ac" + (a.done ? "" : " locked") + "'><span class='ai'>" + a.i + "</span><div><div class='at'>" + a.n + "</div><div class='ad'>" + a.d + "</div>" + progressText + "</div></div>";
+    });
+    $("achlist").innerHTML = h;
+}
+
+function updRes() {
+    var h = "";
+    B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+        var amt = G.res[b.id] || 0;
+        if (amt > 0) h += "<div class='ri2'><span class='rn'>" + b.i + " " + b.n + "</span><span class='rv'>" + amt.toFixed(1) + "/" + G.max + "</span></div>";
+        if (G.proc && G.proc[b.id]) {
+            var pamt = G.proc[b.id];
+            if (pamt > 0) h += "<div class='ri2 pp'><span class='rn'>" + b.i + " Обработ. " + b.n + "</span><span class='rv'>" + pamt.toFixed(1) + "/" + G.pmax + "</span></div>";
+        }
+    });
+    $("rlist").innerHTML = h || "<div style='color:#555;font-size:10px'>Пусто</div>";
+}
+
+function rg() {
+    var cnt = {};
+    for (var y = 0; y < GH; y++) for (var x = 0; x < GW; x++) { var b = gd[y][x]; if (b) cnt[b.t] = (cnt[b.t] || 0) + 1; }
+    var g = $("gd");
+    g.innerHTML = "";
+    for (var y = 0; y < GH; y++) {
+        for (var x = 0; x < GW; x++) {
+            var c = document.createElement("div");
+            c.className = "c";
+            var b = gd[y][x];
+            if (b) {
+                c.classList.add("o");
+                var d = nb(b.t);
+                var h = "<span class='ic'>" + d.i + "</span><span class='lb'>" + d.n + "</span>";
+                if (d.t === "p") {
+                    h += "<span class='en n'>-" + d.eu + "</span><div class='pg'><div class='pf' id='pf" + x + "_" + y + "' style='width:0%'></div></div>";
+                } else if (d.t === "w") {
+                    h += "<span class='en p'>+" + (d.eg + (cnt[b.t] || 0)) + "</span>";
+                } else if (d.t === "m") {
+                    h += "<span class='en m'>-" + d.eu + "</span>";
+                    if (b.raw > 0) h += "<div class='pmp'><div class='pmf' id='pmf" + x + "_" + y + "' style='width:" + ((b.prog || 0) * 100) + "%'></div></div>";
+                } else {
+                    h += "<span class='en r'>+" + (d.bonus * 100) + "%</span>";
+                }
+                c.innerHTML = h;
+                (function(cx, cy) {
+                    c.onmousedown = function(e) { if (e.button === 0) { e.preventDefault(); ou(cx, cy); } };
+                    c.oncontextmenu = function(e) { e.preventDefault(); rb(cx, cy); };
+                })(x, y);
+            } else {
+                if (si >= 0) c.classList.add("p");
+                (function(cx, cy) {
+                    c.onclick = function() {
+                        if (si >= 0 && si < inv.length) {
+                            var placedType = inv[si].t;
+                            gd[cy][cx] = { t: placedType, prog: 0, ls: 0, le: 0, raw: 0 };
+                            inv.splice(si, 1);
+
+                            var nextIdx = -1;
+                            for (var i = 0; i < inv.length; i++) {
+                                if (inv[i].t === placedType) {
+                                    nextIdx = i;
+                                    break;
+                                }
+                            }
+
+                            if (nextIdx >= 0) {
+                                si = nextIdx;
+                            } else {
+                                si = -1;
+                                $("io").classList.remove("s");
+                            }
+
+                            updateSelectedItem();
+                            rg(); ri(); rs(); ru(); uu(); cq(); ca();
+                        }
+                    };
+                })(x, y);
+            }
+            g.appendChild(c);
+        }
+    }
+}
+
+function updateSelectedItem() {
+    if (si >= 0 && si < inv.length) {
+        var b = nb(inv[si].t);
+        var count = inv.filter(function(it) { return it.t === inv[si].t; }).length;
+        $("selectedItem").innerHTML = "Выбрано: " + b.i + " " + b.n + " (x" + count + ")";
+    } else {
+        $("selectedItem").innerHTML = "";
+    }
+}
+
+function rs() {
+    var f = $("sf"), p = $("sp2"), r = $("sr"), m = $("spm");
+    f.innerHTML = ""; p.innerHTML = ""; r.innerHTML = ""; m.innerHTML = "";
+
+    B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+        var ul2 = G.earn >= b.u, c = gc(b.id), d = document.createElement("div");
+        d.className = "si" + (ul2 ? "" : " l");
+        d.innerHTML = "<h4>" + b.i + " " + b.n + "</h4><p>" + b.r + "/с (+1% за каждую) | -" + b.eu + "⚡ | 💰" + spr(b).toFixed(1) + "/шт</p><div class='pr'>" + (ul2 ? c + "💰" : "🔒" + b.u) + "</div>";
+        if (ul2) d.onclick = function() { bf(b.id); };
+        f.appendChild(d);
+    });
+
+    B.filter(function(b) { return b.t === "w"; }).forEach(function(b) {
+        var ul2 = G.earn >= b.u, c = gc(b.id), d = document.createElement("div");
+        d.className = "si" + (ul2 ? "" : " l");
+        d.innerHTML = "<h4>" + b.i + " " + b.n + "</h4><p>+" + b.eg + "⚡ (+1 за каждую)</p><div class='pr'>" + (ul2 ? c + "💰" : "🔒" + b.u) + "</div>";
+        if (ul2) d.onclick = function() { bf(b.id); };
+        p.appendChild(d);
+    });
+
+    B.filter(function(b) { return b.t === "m"; }).forEach(function(b) {
+        var fac = B.find(function(x) { return x.id === b.inId });
+        var ul2 = G.earn >= b.u, c = gc(b.id), d = document.createElement("div");
+        d.className = "si" + (ul2 ? "" : " l");
+        d.innerHTML = "<h4>" + b.i + " " + b.n + "</h4><p>" + fac.n + " → 2× цена | -" + b.eu + "⚡ | " + b.speed + "/с | 💰" + spr2(fac).toFixed(1) + "/шт</p><div class='pr'>" + (ul2 ? c + "💰" : "🔒" + b.u) + "</div>";
+        if (ul2) d.onclick = function() { bf(b.id); };
+        m.appendChild(d);
+    });
+
+    B.filter(function(b) { return b.t === "r"; }).forEach(function(b) {
+        var ul2 = G.earn >= b.u, c = gc(b.id), d = document.createElement("div");
+        d.className = "si" + (ul2 ? "" : " l");
+        d.innerHTML = "<h4>" + b.i + " " + b.n + "</h4><p>+" + (b.bonus * 100) + "% произв. | -" + b.eu + "⚡</p><div class='pr'>" + (ul2 ? c + "💰" : "🔒" + b.u) + "</div>";
+        if (ul2) d.onclick = function() { bf(b.id); };
+        r.appendChild(d);
+    });
+}
+
+function ru() {
+    var c = $("su");
+    c.innerHTML = "";
+    U.forEach(function(u) {
+        var mx = u.l >= u.mx, cost = Math.floor(u.c * M.uf * Math.pow(u.m, u.l)), d = document.createElement("div");
+        d.className = "si" + (mx ? " l" : "");
+        var desc = u.d;
+        if (u.id === "asd") desc = "КД: " + asdCD().toFixed(2) + "с";
+        if (u.id === "asp") desc = "Продаёт: " + aspPct().toFixed(1) + "%";
+        if (u.id === "as" && ul("as") > 0) desc = "Вкл! КД " + asdCD().toFixed(2) + "с, " + aspPct().toFixed(1) + "%";
+        d.innerHTML = "<h4>" + u.n + " <span style='float:right;color:#888;font-size:10px'>" + (u.mx >= 99999 ? "Ур." + u.l : u.l + "/" + u.mx) + "</span></h4><p>" + desc + "</p><div class='pr'>" + (u.mx >= 99999 && u.l >= 99999 ? "✅" : cost + "💰") + "</div>";
+        if (!mx) d.onclick = function() { bu(u.id); };
+        c.appendChild(d);
+    });
+}
+
+function ri() {
+    var c = $("ig");
+    c.innerHTML = "";
+    if (!inv.length) { c.innerHTML = "<div style='color:#555;padding:16px'>Пусто</div>"; return; }
+    inv.forEach(function(it, i) {
+        var b = nb(it.t), d = document.createElement("div");
+        d.className = "sl" + (i === si ? " sel" : "");
+        d.innerHTML = "<span class='ic'>" + b.i + "</span><span class='lb'>" + b.n + "</span>";
+        d.onclick = function() {
+            si = i;
+            $("io").classList.remove("s");
+            updateSelectedItem();
+            rg();
+        };
+        c.appendChild(d);
+    });
+}
+
+function bu(id) {
+    var u = U.find(function(x) { return x.id === id; });
+    if (u.l >= u.mx) return;
+    var cost = Math.floor(u.c * M.uf * Math.pow(u.m, u.l));
+    if (G.money < cost) { nf("Не хватает!", "e"); return; }
+    G.money -= cost;
+    u.l++;
+    if (id === "sp") G.max += 15;
+    if (id === "as") nf("Автопродажа!", "w");
+    uu(); ru(); ca();
+}
+
+function bf(id) {
+    var b = nb(id);
+    if (G.earn < b.u) { nf("Сначала заработай!", "e"); return; }
+    var c = gc(id);
+    if (G.money < c) { nf("Не хватает!", "e"); return; }
+    G.money -= c;
+    inv.push({ t: id });
+    ri(); rs(); uu();
+    nf(b.i + " куплен!");
+}
+
+function rb(x, y) {
+    var b = gd[y][x];
+    if (!b) return;
+    inv.push({ t: b.t });
+    gd[y][x] = null;
+    rg(); ri(); rs(); ru(); uu();
+    nf("Убрано в инвентарь");
+}
+
+function ou(x, y) {
+    var b = gd[y][x];
+    if (!b) return;
+    var d = nb(b.t);
+    if (d.t === "m") { openProcMenu(x, y); return; }
+    ut = Object.assign({}, gd[y][x]);
+    ut.x = x; ut.y = y;
+    var b2 = nb(ut.t), sm = Math.pow(1.25, ut.ls || 0), em3 = Math.pow(1.3, ut.le || 0), syn = tc(ut.t);
+    $("ut").textContent = "Улучшение: " + b2.n;
+    if (b2.t === "r") {
+        $("us").innerHTML = "Бонус: +" + (b2.bonus * sm * 100).toFixed(1) + "%";
+        $("bs1").innerHTML = "🔬 Бонус +25% — " + ucost(b2.uc, ut.ls || 0) + "💰";
+        $("be1").style.display = "none";
+    } else if (b2.t === "w") {
+        $("us").innerHTML = "Ген: " + ((b2.eg + syn) * em3).toFixed(1) + " (синергия +" + syn + ")";
+        $("bs1").innerHTML = "🔋 Ген +30% — " + ucost(Math.floor(b2.uc * 1.5), ut.le || 0) + "💰";
+        $("be1").style.display = "none";
+    } else {
+        $("us").innerHTML = "Скорость: " + ((b2.r || 0) * sm * (1 + syn * 0.01)).toFixed(1) + " | 💰" + spr(b2).toFixed(1) + "/шт (синергия +" + syn + "%)";
+        $("bs1").innerHTML = "⚡ Скорость +25% — " + ucost(b2.uc, ut.ls || 0) + "💰";
+        $("be1").style.display = "none";
+    }
+    $("ui").classList.add("s");
+}
+
+function cu() { $("ui").classList.remove("s"); ut = null; }
+function closePM() { $("pm").classList.remove("s"); pmTarget = null; }
+
+function openProcMenu(x, y) {
+    var b = gd[y][x], d = nb(b.t);
+    pmTarget = { x: x, y: y };
+    var fac = B.find(function(z) { return z.id === d.inId });
+    var raw = b.raw || 0, prog = b.prog || 0, proc = G.proc && G.proc[d.inId] || 0;
+    var sp = d.speed * Math.pow(1.25, b.ls || 0);
+    $("pmt").textContent = d.i + " " + d.n;
+    $("pms").innerHTML = "Загружено: <b style='color:#ce93d8'>" + Math.floor(raw) + "</b> " + fac.n + "<br>Обработано: <b style='color:#f9a825'>" + proc.toFixed(1) + "</b> шт (лимит: 50)<br>Скорость: <b>" + sp.toFixed(2) + "/с</b><br>Цена: 💰" + spr2(fac).toFixed(1) + " → 💰" + (spr2(fac) * em() * PM).toFixed(0) + "/шт";
+    $("pmProg").style.width = (prog * 100) + "%";
+    $("pmAdd10").onclick = function() { addProcRaw(x, y, 10); };
+    $("pmAddAll").onclick = function() { addProcRaw(x, y, 999999); };
+    $("pmSell").onclick = function() { sellProc(d.inId); };
+    $("pmUpgrade").onclick = function() {
+        var c = ucost(d.uc * 1.5, b.ls || 0);
+        if (G.money < c) { nf("Не хватает!", "e"); return; }
+        G.money -= c;
+        gd[y][x].ls = (b.ls || 0) + 1;
+        nf("Скорость +25%!", "a");
+        openProcMenu(x, y);
+        uu();
+    };
+    $("pm").classList.add("s");
+}
+
+function addProcRaw(x, y, amt) {
+    var b = gd[y][x], d = nb(b.t);
+    var have = G.res[d.inId] || 0;
+    var put = Math.min(amt, have);
+    if (put <= 0) { nf("Нет руды!", "e"); return; }
+    G.res[d.inId] -= put;
+    b.raw = (b.raw || 0) + put;
+    nf("Загружено " + put.toFixed(1) + " руды", "w");
+    openProcMenu(x, y);
+    updRes(); uu();
+}
+
+function sellProc(inId) {
+    var b = B.find(function(x) { return x.id === inId; });
+    var amt = G.proc[inId] || 0;
+    if (amt <= 0) { nf("Нечего продавать", "e"); return; }
+    var val = Math.floor(amt * spr2(b) * em() * PM);
+    G.proc[inId] = 0;
+    G.money += val; G.earn += val; st += amt;
+    nf("Продано " + amt.toFixed(1) + " обработ. " + b.n + " за " + val + "💰", "w");
+    if (pmTarget) openProcMenu(pmTarget.x, pmTarget.y);
+    updRes(); uu(); cq();
+}
+
+function sellProcInSell(id) {
+    var b = B.find(function(x) { return x.id === id; });
+    var amt = G.proc[id] || 0;
+    if (amt <= 0) return;
+    var val = Math.floor(amt * spr2(b) * em() * PM);
+    G.proc[id] = 0;
+    G.money += val; G.earn += val; st += amt;
+    nf("Продано " + amt.toFixed(1) + " обработ. " + b.n + " за " + val + "💰", "w");
+    uu(); cq(); updRes(); showSell();
+}
+
+function us1() {
+    if (!ut) return;
+    var b = nb(ut.t);
+    if (b.t === "w") {
+        var c = ucost(Math.floor(b.uc * 1.5), ut.le || 0);
+        if (G.money < c) { nf("Не хватает!", "e"); return; }
+        G.money -= c;
+        gd[ut.y][ut.x].le = (ut.le || 0) + 1;
+    } else {
+        var c = ucost(b.uc, ut.ls || 0);
+        if (G.money < c) { nf("Не хватает!", "e"); return; }
+        G.money -= c;
+        gd[ut.y][ut.x].ls = (ut.ls || 0) + 1;
+    }
+    uc++; uu(); cu(); rg(); cq(); ca();
+    nf("Улучшено!");
+}
+
+function ue1() {
+    if (!ut) return;
+    var b = nb(ut.t);
+    var c = ucost(Math.floor(b.uc * 1.5), ut.le || 0);
+    if (G.money < c) { nf("Не хватает!", "e"); return; }
+    G.money -= c;
+    gd[ut.y][ut.x].le = (ut.le || 0) + 1;
+    uc++; uu(); cu(); rg(); cq(); ca();
+    nf("Улучшено!");
+}
+
+function uco() {
+    if (cc > 0) return;
+    me += 5 + P * 10;
+    cc = Math.max(1, 10 - P * 0.5);
+    cu2++;
+    nf("⚡ +" + (5 + P * 10) + " энергии!", "w");
+    cq(); ca(); uu(); ucb();
+}
+
+function ucb() {
+    var b = $("coilBtn");
+    if (cc > 0) { b.disabled = true; b.innerHTML = "<div class='cd'>" + Math.ceil(cc) + "с</div>"; }
+    else { b.disabled = false; b.innerHTML = "⚡ Катушка"; }
+}
+
+function showSell() {
+    var l = $("sdl");
+    l.innerHTML = '<div class="sellTabs"><button class="sellTab ' + (sellTab === 'raw' ? 'active' : '') + '" id="sellTabRaw">⛏️ Руды</button><button class="sellTab ' + (sellTab === 'proc' ? 'active' : '') + '" id="sellTabProc">🔧 Обработанные</button></div><div id="sellList"></div>';
+    $("sellTabRaw").onclick = function() { sellTab = 'raw'; showSell(); };
+    $("sellTabProc").onclick = function() { sellTab = 'proc'; showSell(); };
+
+    var list = $("sellList");
+    var hasAny = false, totalVal = 0;
+
+    if (sellTab === 'raw') {
+        var rawTotal = 0;
+        B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+            var amt = G.res[b.id] || 0;
+            var val = Math.floor(amt * spr(b) * em() * PM);
+            rawTotal += amt;
+            if (amt > 0) { hasAny = true; totalVal += val; }
+            var d = document.createElement("div");
+            d.className = "srow";
+            var info = document.createElement("span");
+            info.className = "sinfo";
+            info.innerHTML = b.i + " " + b.n + " <span style='color:#888'>" + amt.toFixed(1) + "/" + G.max + "</span> <span style='color:#f9a825'>" + val + "💰</span>";
+            d.appendChild(info);
+            if (amt > 0) {
+                var btn = document.createElement("button");
+                btn.className = "sbtn";
+                btn.textContent = "Продать";
+                btn.onclick = function() { sellOne(b.id); };
+                d.appendChild(btn);
+            }
+            list.appendChild(d);
+        });
+        var hdr = document.createElement("div");
+        hdr.style.cssText = "text-align:center;color:#4dd0e1;font-size:12px;margin-bottom:8px;padding:6px;background:#0f3460;border-radius:5px";
+        hdr.innerHTML = "📦 Склад руд: " + rawTotal.toFixed(1) + " / " + (PC * G.max) + " мест";
+        list.insertBefore(hdr, list.firstChild);
+    } else {
+        var procTotal = 0;
+        if (G.proc) {
+            B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+                var pamt = G.proc[b.id] || 0;
+                var pval = Math.floor(pamt * spr2(b) * em() * PM);
+                procTotal += pamt;
+                if (pamt > 0) { hasAny = true; totalVal += pval; }
+                var d = document.createElement("div");
+                d.className = "srow pp";
+                var info = document.createElement("span");
+                info.className = "sinfo";
+                info.innerHTML = b.i + " Обработ. " + b.n + " <span style='color:#888'>" + pamt.toFixed(1) + "/50</span> <span style='color:#f9a825'>" + pval + "💰</span>";
+                d.appendChild(info);
+                if (pamt > 0) {
+                    var btn = document.createElement("button");
+                    btn.className = "sbtn";
+                    btn.textContent = "Продать";
+                    btn.onclick = function() { sellProcInSell(b.id); };
+                    d.appendChild(btn);
+                }
+                list.appendChild(d);
+            });
+        }
+        var hdr = document.createElement("div");
+        hdr.style.cssText = "text-align:center;color:#ce93d8;font-size:12px;margin-bottom:8px;padding:6px;background:#0f3460;border-radius:5px";
+        hdr.innerHTML = "📦 Склад обработанных: " + procTotal.toFixed(1) + " / 250 мест";
+        list.insertBefore(hdr, list.firstChild);
+    }
+
+    $("sda").textContent = hasAny ? ("Продать всё (" + totalVal + "💰)") : "Нечего продавать";
+    $("sda").disabled = !hasAny;
+    $("sd").classList.add("s");
+}
+
+function sellOne(id) {
+    var b = nb(id);
+    var amt = G.res[id] || 0;
+    if (amt <= 0) return;
+    var val = Math.floor(amt * spr(b) * em() * PM);
+    G.res[id] = 0;
+    G.money += val; G.earn += val; st += amt;
+    nf("Продано " + amt.toFixed(1) + " " + b.n + " за " + val + "💰", "w");
+    uu(); cq(); updRes(); showSell();
+}
+
+function sellAll2() {
+    var total = 0, totalAmt = 0;
+    if (sellTab === 'raw') {
+        B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+            var amt = G.res[b.id] || 0;
+            if (amt > 0) { total += Math.floor(amt * spr(b) * em() * PM); totalAmt += amt; G.res[b.id] = 0; }
+        });
+    } else {
+        if (G.proc) {
+            B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+                var pamt = G.proc[b.id] || 0;
+                if (pamt > 0) { total += Math.floor(pamt * spr2(b) * em() * PM); totalAmt += pamt; G.proc[b.id] = 0; }
+            });
+        }
+    }
+    G.money += total; G.earn += total; st += totalAmt;
+    nf("Продано всё за " + total + "💰", "w");
+    uu(); cq(); updRes(); showSell();
+}
+
+function uu() {
+    $("mn").textContent = Math.floor(G.money);
+    $("st").textContent = tres().toFixed(1);
+    $("sm").textContent = PC * G.max;
+    $("pst").textContent = tpres().toFixed(1);
+    $("psm").textContent = 250;
+    var g = eg(), u = eu();
+    $("et").textContent = Math.floor(g) + "/" + Math.floor(u);
+    var ef = u > 0 ? Math.min(1, g / u) : 1;
+    $("ef").style.width = Math.min(100, ef * 100) + "%";
+    $("ef").style.background = ef >= 1 ? "#66bb6a" : (ef >= 0.5 ? "#f9a825" : "#ef5350");
+    $("pCount").textContent = modeP[mode];
+    $("pMult").textContent = PM.toFixed(1);
+    if (M.quests) $("gqCount").textContent = globalQCount[qDiff] || 0;
+    $("pbtn").style.display = G.earn >= pc() ? "" : "none";
+}
+
+function showPrestige() {
+    var cp = modeP[mode];
+    var npm = 1 + (cp + 1) * 0.5;
+    $("pds").innerHTML = "Перерождение #" + (cp + 1) + "<br>Цена: " + pc() + "💰 (нужно заработать)<br>Сброс: всё<br>Множитель: x" + PM.toFixed(1) + " → x" + npm.toFixed(1) + "<br>Старт: " + (M.money * (1 + cp + 1)) + "💰<br>Энергия: +" + (10 * (cp + 1)) + "⚡<br>Катушка: кд " + Math.max(1, 10 - (cp + 1) * 0.5) + "с, +" + (5 + 10 * (cp + 1)) + "⚡<br>Склад: +" + (5 * (cp + 1)) + "<br>Достижения сохраняются";
+    $("pd").classList.add("s");
+}
+
+function doPrestige() {
+    modeP[mode]++;
+    modePM[mode] = 1 + modeP[mode] * 0.5;
+    P = modeP[mode];
+    PM = modePM[mode];
+    saves[skey()] = null;
+    nf("🔁 #" + P + "! x" + PM.toFixed(1), "a");
+    startGame(mode);
+    autoSave();
+}
+
+function saveState() {
+    saves[skey()] = {
+        g: JSON.parse(JSON.stringify(G)), g2: JSON.parse(JSON.stringify(gd)), iv: JSON.parse(JSON.stringify(inv)),
+        ul: U.map(function(u) { return u.l; }), me: me, cc: cc, cu2: cu2, uc: uc, st: st,
+        qs: JSON.parse(JSON.stringify(qs)), ac: JSON.parse(JSON.stringify(ac))
+    };
+}
+
+function saveNick() {
+    var ex = localStorage.getItem('ind_nick');
+    if (ex) { myNick = ex; $("nickInput").value = ex; $("nickInput").disabled = true; $("nickEditBtn").style.display = ""; return; }
+    myNick = $("nickInput").value.trim() || 'Игрок' + Math.floor(Math.random() * 900 + 100);
+    localStorage.setItem('ind_nick', myNick);
+    $("nickInput").disabled = true;
+    $("nickEditBtn").style.display = "";
+}
+
+function autoSave() {
+    if (!G) return;
+    saveState();
+    try {
+        localStorage.setItem('ind_main_save', JSON.stringify({
+            saves: saves, mP: modeP, mPM: modePM, gAch: globalAch, gQCount: globalQCount, lastMode: mode, lastDiff: qDiff
+        }));
+    } catch (e) {}
+}
+
+function autoLoad() {
+    try {
+        var s = localStorage.getItem('ind_main_save');
+        if (!s) return false;
+        var d = JSON.parse(s);
+        saves = d.saves || {};
+        modeP = d.mP || { classic: 0, hardcore: 0, challenge: 0 };
+        modePM = d.mPM || { classic: 1, hardcore: 1, challenge: 1 };
+        globalAch = d.gAch || { classic: {}, hardcore: {}, challenge: {} };
+        globalQCount = d.gQCount || { 0: 0, 1: 0, 2: 0 };
+        lastMode = d.lastMode || null;
+        lastDiff = d.lastDiff || 0;
+        return true;
+    } catch (e) { return false; }
+}
+
+function lbPostScore() {
+    if (!myNick || !G) return;
+    var now = Date.now();
+    if (now - lbLastPost < 15000) return;
+    lbLastPost = now;
+    var topic = LB_TOPICS[mode] || LB_TOPICS.classic;
+    try {
+        fetch('https://ntfy.sh/' + topic, { method: 'POST', headers: { 'TTL': '259200' }, body: JSON.stringify({ n: myNick, s: Math.floor(G.money) }) }).catch(function() {});
+    } catch (e) {}
+}
+
+function lbFetchScores(topic, cb) {
+    try {
+        fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=all').then(function(r) { return r.text(); }).then(function(text) {
+            var entries = {};
+            if (text && text.trim()) {
+                text.trim().split('\n').forEach(function(line) {
+                    if (!line.trim()) return;
+                    try {
+                        var m = JSON.parse(line);
+                        if (m.message) {
+                            var d = JSON.parse(m.message);
+                            if (d.n && d.s !== undefined) {
+                                if (!entries[d.n] || entries[d.n].s < d.s) { entries[d.n] = { n: d.n, s: d.s }; }
+                            }
+                        }
+                    } catch (e) {}
+                });
+            }
+            cb(Object.values(entries).sort(function(a, b) { return b.s - a.s; }));
+        }).catch(function() { cb([]); });
+    } catch (e) { cb([]); }
+}
+
+function lbRender() {
+    var list = $("lbList");
+    list.innerHTML = '<div style="color:#888;text-align:center;padding:10px">Загрузка...</div>';
+    document.querySelectorAll('.lbTab').forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-lb') === lbViewMode); });
+    lbFetchScores(LB_TOPICS[lbViewMode], function(arr) {
+        if (!arr) arr = [];
+        if (myNick && G && lbViewMode === mode) {
+            var myScore = Math.floor(G.money);
+            var found = false;
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].n === myNick) { found = true; if (arr[i].s < myScore) arr[i].s = myScore; break; }
+            }
+            if (!found && myScore > 0) arr.push({ n: myNick, s: myScore });
+        }
+        arr.sort(function(a, b) { return b.s - a.s; });
+        if (!arr.length) { list.innerHTML = '<div style="color:#888;text-align:center;padding:10px">Пока пусто. Сыграй и попади в топ!</div>'; return; }
+        var h = '', myRank = -1;
+        arr.forEach(function(e, i) { if (e.n === myNick) myRank = i; });
+        var sc = Math.min(20, arr.length);
+        for (var i = 0; i < sc; i++) {
+            var e = arr[i], rc = i < 3 ? 'r' + (i + 1) : '', me2 = e.n === myNick ? ' me' : '';
+            h += '<div class="lbRow' + me2 + '"><span class="lbR ' + rc + '">' + (i + 1) + '</span><span class="lbN">' + e.n + '</span><span class="lbS">' + Math.floor(e.s) + '💰</span></div>';
+        }
+        if (myRank >= sc) {
+            h += '<div style="text-align:center;color:#555;padding:3px">. . .</div><div class="lbRow me"><span class="lbR">' + (myRank + 1) + '</span><span class="lbN">' + myNick + '</span><span class="lbS">' + Math.floor(arr[myRank].s) + '💰</span></div>';
+        }
+        list.innerHTML = h;
+    });
+}
+
+function checkSaveExists() {
+    var has = !!localStorage.getItem('ind_main_save');
+    $("contBtn").style.display = has ? "" : "none";
+    $("resetBtn").style.display = has ? "" : "none";
+}
+
+function chatPost(msg, ts) {
+    if (!myNick) return;
+    try { fetch('https://ntfy.sh/' + CHAT_TOPIC, { method: 'POST', headers: { 'TTL': '259200' }, body: JSON.stringify({ n: myNick, m: msg, t: ts }) }).catch(function() {}); } catch (e) {}
+}
+
+function chatFetch() {
+    try {
+        fetch('https://ntfy.sh/' + CHAT_TOPIC + '/json?poll=1&since=all').then(function(r) { return r.text(); }).then(function(text) {
+            var nm = [];
+            if (text && text.trim()) {
+                text.trim().split('\n').forEach(function(line) {
+                    if (!line.trim()) return;
+                    try {
+                        var m = JSON.parse(line);
+                        if (m.message) {
+                            var d = JSON.parse(m.message);
+                            if (d.n && d.m) {
+                                var key = d.n + '_' + d.t;
+                                if (!chatSeen[key]) {
+                                    chatSeen[key] = true;
+                                    nm.push(d);
+                                    if (d.n !== myNick && !chatOpen) { chatUnread++; chatUpdateBadge(); }
+                                }
+                            }
+                        }
+                    } catch (e) {}
+                });
+            }
+            if (nm.length) { chatMsgs = chatMsgs.concat(nm).sort(function(a, b) { return a.t - b.t; }).slice(-100); chatRender(); saveChat(); }
+        }).catch(function() {});
+    } catch (e) {}
+}
+
+function chatRender() {
+    var c = $("chatMsgs");
+    if (!chatMsgs.length) { c.innerHTML = '<div class="chatLoading">Нет сообщений. Напиши первым!</div>'; return; }
+    var h = '';
+    chatMsgs.forEach(function(m) {
+        var me2 = m.n === myNick ? ' me' : ' other';
+        var time = new Date(m.t).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
+        h += '<div class="chatMsg' + me2 + '"><span class="chatNick">' + m.n.replace(/</g, '&lt;') + ':</span> ' + m.m.replace(/</g, '&lt;') + '<span class="chatTime">' + time + '</span></div>';
+    });
+    c.innerHTML = h;
+    c.scrollTop = c.scrollHeight;
+}
+
+function chatUpdateBadge() {
+    var b = $("chatBadge");
+    if (chatUnread > 0) { b.textContent = chatUnread > 99 ? '99+' : chatUnread; b.style.display = 'flex'; }
+    else { b.style.display = 'none'; }
+}
+
+function chatToggle() {
+    chatOpen = !chatOpen;
+    if (chatOpen) {
+        $("chatPanel").classList.add("s");
+        chatUnread = 0;
+        chatUpdateBadge();
+        if (!chatMsgs.length) chatFetch(); else chatRender();
+    } else {
+        $("chatPanel").classList.remove("s");
+    }
+}
+
+function chatSend() {
+    var inp = $("chatTextInput");
+    var v = inp.value.trim();
+    if (!v) return;
+    var ts = Date.now();
+    chatPost(v, ts);
+    chatMsgs.push({ n: myNick, m: v, t: ts });
+    chatSeen[myNick + '_' + ts] = true;
+    inp.value = '';
+    chatRender();
+    saveChat();
+}
+
+function saveChat() { try { localStorage.setItem('ind_chat_save', JSON.stringify({ msgs: chatMsgs.slice(-100), seen: chatSeen })); } catch (e) {} }
+function loadChat() { try { var s = localStorage.getItem('ind_chat_save'); if (!s) return; var d = JSON.parse(s); chatMsgs = d.msgs || []; chatSeen = d.seen || {}; } catch (e) {} }
+
+function gl(now) {
+    requestAnimationFrame(gl);
+    if (!G) return;
+    var dt = Math.min(0.1, (now - lt) / 1000);
+    lt = now;
+    var u = eu(), g = eg();
+    var ef = u > 0 ? g / u : 0;
+    if (ef > 1) ef = 1; else if (ef < M.ef) ef = M.ef;
+
+    if (me > 0) me = Math.max(0, me - dt);
+    if (cc > 0) { cc = Math.max(0, cc - dt); ucb(); }
+
+    var rmv = rm() * PM;
+    var cnt = {};
+    for (var y2 = 0; y2 < GH; y2++) for (var x2 = 0; x2 < GW; x2++) { var b2 = gd[y2][x2]; if (b2) cnt[b2.t] = (cnt[b2.t] || 0) + 1; }
+
+    for (var y = 0; y < GH; y++) {
+        for (var x = 0; x < GW; x++) {
+            var b = gd[y][x];
+            if (!b) continue;
+            var d = nb(b.t);
+            if (d.t === "p") {
+                var sm = Math.pow(1.25, b.ls || 0);
+                b.prog += d.r * sm * M.pm * ef * rmv * (1 + (cnt[d.id] || 0) * 0.01) * dt;
+                if (b.prog >= 1) {
+                    var a = Math.floor(b.prog);
+                    b.prog -= a;
+                    var cur = G.res[d.id] || 0;
+                    var cs = G.max - cur;
+                    if (cs > 0) {
+                        var add = Math.min(a, cs);
+                        if (!G.res[d.id]) G.res[d.id] = 0;
+                        G.res[d.id] += add;
+                        G.prod += add;
+                        cq();
+                    }
+                }
+                var pf = $("pf" + x + "_" + y);
+                if (pf) pf.style.width = Math.min(100, b.prog * 100) + "%";
+            } else if (d.t === "m" && b.raw > 0) {
+                var sp = d.speed * Math.pow(1.25, b.ls || 0) * ef;
+                b.prog = (b.prog || 0) + sp * dt;
+                while (b.prog >= 1 && b.raw > 0) {
+                    b.raw--;
+                    b.prog--;
+                    if (!G.proc) G.proc = {};
+                    var pcur = G.proc[d.inId] || 0;
+                    if (pcur < 50) G.proc[d.inId] = pcur + 1;
+                }
+                var pmf = $("pmf" + x + "_" + y);
+                if (pmf) pmf.style.width = Math.min(100, (b.prog || 0) * 100) + "%";
+            }
+        }
+    }
+
+    ast += dt;
+    if (ul("as") > 0 && ast >= asdCD()) {
+        ast = 0;
+        var pct = aspPct() / 100;
+        var total = 0;
+        B.filter(function(b) { return b.t === "p"; }).forEach(function(b) {
+            var amt = G.res[b.id] || 0;
+            var sell = Math.floor(amt * pct);
+            if (sell > 0) { total += sell * spr(b); G.res[b.id] -= sell; st += sell; }
+            if (G.proc && G.proc[b.id]) {
+                var pamt = G.proc[b.id];
+                var psell = Math.floor(pamt * pct);
+                if (psell > 0) { total += psell * spr2(b); G.proc[b.id] -= psell; st += psell; }
+            }
+        });
+        total = Math.floor(total * em() * PM);
+        if (total > 0) { G.money += total; G.earn += total; nf("Авто: +" + total + "💰", "w"); }
+    }
+
+    qt2 += dt;
+    if (qt2 >= 0.5) {
+        qt2 = 0;
+        if (M.quests) rq();
+        updRes();
+        if ($("sd").classList.contains("s")) showSell();
+    }
+
+    chatTimer += dt;
+    if (chatTimer >= 5) { chatTimer = 0; chatFetch(); saveChat(); }
+
+    lbTimer += dt;
+    if (lbTimer >= 5) { lbTimer = 0; autoSave(); lbPostScore(); }
+
+    ca();
+    uu();
+}
+
+function startGame(m, diff) {
+    mode = m;
+    if (mode === "challenge" && diff !== undefined) qDiff = diff;
+    lastMode = m;
+    if (diff !== undefined) lastDiff = diff;
+
+    M = MD[m];
+    P = modeP[m];
+    PM = modePM[m];
+    var sk = skey();
+
+    if (saves[sk]) {
+        var s = saves[sk];
+        G = s.g;
+        gd = s.g2;
+        inv = s.iv;
+        U.forEach(function(u, i) { u.l = s.ul[i]; });
+        me = s.me; cc = s.cc; cu2 = s.cu2; uc = s.uc; st = s.st;
+        qs = s.qs || [];
+        ac = s.ac || [];
+        si = -1; ut = null; qt2 = 0;
+        if (!G.proc) G.proc = {};
+        G.pmax = 50;
+    } else {
+        G = { money: M.money * (1 + P), res: {}, proc: {}, max: 50 + P * 5, pmax: 50, prod: 0, earn: 0 };
+        gd = [];
+        for (var y = 0; y < GH; y++) {
+            gd[y] = [];
+            for (var x = 0; x < GW; x++) gd[y][x] = null;
+        }
+        inv = []; si = -1; ut = null; uc = 0; st = 0; me = P * 10; cc = 0; cu2 = 0; qt2 = 0;
+        U.forEach(function(u) { u.l = 0; });
+        if (M.quests) {
+            qs = [];
+            ac = AD.map(function(a) { return Object.assign({}, a, { done: !!globalAch[mode][a.id] }); });
+            gq(); gq();
+        } else {
+            qs = []; ac = [];
+        }
+    }
+
+    if (M.quests) {
+        $("qbox").style.display = "block";
+        $("achbox").style.display = "block";
+        $("modeTag").style.display = "";
+        $("abtn").style.display = "";
+        $("gqTag").style.display = "";
+        $("qDiffName").textContent = QDN[qDiff];
+    } else {
+        $("qbox").style.display = "none";
+        $("achbox").style.display = "none";
+        $("modeTag").style.display = "none";
+        $("abtn").style.display = "none";
+        $("gqTag").style.display = "none";
+    }
+
+    $("pTag").style.display = P > 0 ? "" : "none";
+    $("m").style.display = "none";
+    $("md").classList.remove("s");
+    $("gw").style.display = "block";
+
+    updateSelectedItem();
+    rg(); rs(); ru(); ri(); rq(); updRes(); uu();
+    lt = performance.now();
+    lbPostScore();
+    loadChat();
+    chatRender();
+    chatFetch();
+
+    if (!loopStarted) {
+        loopStarted = true;
+        gl(performance.now());
+    }
+}
+
+$("mbtn1").onclick = function() { saveNick(); startGame("classic"); };
+$("mbtn2").onclick = function() { saveNick(); startGame("hardcore"); };
+$("mbtn3").onclick = function() { saveNick(); $("m").style.display = "none"; $("md").classList.add("s"); };
+$("mdb1").onclick = function() { saveNick(); startGame("challenge", 0); };
+$("mdb2").onclick = function() { saveNick(); startGame("challenge", 1); };
+$("mdb3").onclick = function() { saveNick(); startGame("challenge", 2); };
+$("mdbBack").onclick = function() { $("md").classList.remove("s"); $("m").style.display = "flex"; };
+$("contBtn").onclick = function() { saveNick(); if (lastMode) startGame(lastMode, lastDiff); };
+$("resetBtn").onclick = function() {
+    if (confirm('Сбросить весь прогресс?')) {
+        localStorage.removeItem('ind_main_save');
+        saves = {};
+        modeP = { classic: 0, hardcore: 0, challenge: 0 };
+        modePM = { classic: 1, hardcore: 1, challenge: 1 };
+        globalAch = { classic: {}, hardcore: {}, challenge: {} };
+        globalQCount = { 0: 0, 1: 0, 2: 0 };
+        lastMode = null;
+        G = null; gd = []; inv = [];
+        U.forEach(function(u) { u.l = 0; });
+        checkSaveExists();
+        nf("Сброшено", "e");
+    }
+};
+$("nickEditBtn").onclick = function() {
+    if (confirm('Сменить ник?')) {
+        $("nickInput").disabled = false;
+        $("nickInput").value = '';
+        $("nickInput").focus();
+        $("nickEditBtn").style.display = "none";
+        localStorage.removeItem('ind_nick');
+        myNick = '';
+    }
+};
+
+$("coilBtn").onclick = uco;
+$("sb2").onclick = showSell;
+$("ib").onclick = function() { $("io").classList.toggle("s"); };
+$("abtn").onclick = function() { var b = $("achbox"); b.style.display = b.style.display === "none" ? "block" : "none"; };
+$("uc").onclick = cu;
+$("pmc").onclick = closePM;
+$("bs1").onclick = us1;
+$("be1").onclick = ue1;
+
+$("io").onclick = function(e) { if (e.target.id === "io") $("io").classList.remove("s"); };
+$("sd").onclick = function(e) { if (e.target.id === "sd") $("sd").classList.remove("s"); };
+$("pm").onclick = function(e) { if (e.target.id === "pm") closePM(); };
+
+$("sda").onclick = sellAll2;
+$("pbtn").onclick = showPrestige;
+$("pdc").onclick = function() { $("pd").classList.remove("s"); };
+$("pgo").onclick = function() {
+    if (G.earn < pc()) { nf("Нужно " + pc() + "💰", "e"); return; }
+    $("pd").classList.remove("s");
+    doPrestige();
+};
+
+$("toMenuBtn").onclick = function() {
+    autoSave(); lbPostScore();
+    chatOpen = false;
+    $("chatPanel").classList.remove("s");
+    lbViewMode = mode;
+    $("gw").style.display = "none";
+    $("m").style.display = "flex";
+    checkSaveExists();
+    lbRender();
+};
+
+$("chatBtn").onclick = chatToggle;
+$("chatClose").onclick = function() { chatOpen = false; $("chatPanel").classList.remove("s"); };
+$("chatSendBtn").onclick = chatSend;
+$("chatTextInput").onkeydown = function(e) { if (e.code === "Enter") { chatSend(); e.preventDefault(); } };
+
+document.querySelectorAll('.lbTab').forEach(function(t) {
+    t.onclick = function() {
+        lbViewMode = t.getAttribute('data-lb');
+        lbRender();
+    };
+});
+
+document.onkeydown = function(e) {
+    if (e.target && e.target.id === "chatTextInput") return;
+    if (e.code === "KeyE") { $("io").classList.toggle("s"); e.preventDefault(); }
+    if (e.code === "Escape") {
+        $("io").classList.remove("s");
+        cu();
+        closePM();
+        $("pd").classList.remove("s");
+        $("sd").classList.remove("s");
+        if (chatOpen) { chatOpen = false; $("chatPanel").classList.remove("s"); }
+    }
+    if (e.code === "KeyM") {
+        if ($("gw").style.display !== "none") {
+            autoSave(); lbPostScore();
+            chatOpen = false;
+            $("chatPanel").classList.remove("s");
+            lbViewMode = mode;
+            $("gw").style.display = "none";
+            $("m").style.display = "flex";
+            checkSaveExists();
+            lbRender();
+        }
+    }
+    if (e.code === "Space" && $("gw").style.display !== "none") {
+        e.preventDefault();
+        uco();
+    }
+};
+
+myNick = localStorage.getItem('ind_nick') || '';
+$("nickInput").value = myNick;
+if (myNick) {
+    $("nickInput").disabled = true;
+    $("nickEditBtn").style.display = "";
+}
+autoLoad();
+checkSaveExists();
+lbRender();
+</script>
+</body>
+</html
